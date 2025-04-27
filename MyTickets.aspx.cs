@@ -76,6 +76,9 @@ namespace Laba3
 
         protected void TicketsGridView_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            if (e.CommandArgument == null)
+                return;
+
             int taskId = Convert.ToInt32(e.CommandArgument);
 
             if (e.CommandName == "ViewTicket")
@@ -89,6 +92,14 @@ namespace Laba3
             else if (e.CommandName == "AssignTicket" && Session["UserRole"].ToString() == "IT_STAFF")
             {
                 AssignTicket(taskId);
+            }
+            else if (e.CommandName == "EditTicket" && Session["UserRole"].ToString() == "CLIENT")
+            {
+                Response.Redirect($"~/EditTicket.aspx?id={taskId}");
+            }
+            else if (e.CommandName == "DeleteTicket" && Session["UserRole"].ToString() == "CLIENT")
+            {
+                DeleteTicket(taskId);
             }
         }
 
@@ -153,6 +164,22 @@ namespace Laba3
                         SendEmailNotification(client.Email, taskId, task.Name, "assigned", staff?.Fio);
                     }
 
+                    LoadTickets();
+                }
+            }
+        }
+
+        private void DeleteTicket(int taskId)
+        {
+            int clientId = Convert.ToInt32(Session["UserID"]);
+
+            using (var db = new ApplicationDbContext())
+            {
+                var task = db.Tasks.FirstOrDefault(t => t.Id == taskId && t.ClientId == clientId);
+                if (task != null)
+                {
+                    db.Tasks.Remove(task);
+                    db.SaveChanges();
                     LoadTickets();
                 }
             }

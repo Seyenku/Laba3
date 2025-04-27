@@ -180,6 +180,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="DirectLogin.aspx" />
+    <Content Include="EditTicket.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="MyTickets.aspx" />
@@ -370,6 +371,13 @@
     </Compile>
     <Compile Include="DirectLogin.aspx.designer.cs">
       <DependentUpon>DirectLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditTicket.aspx.cs">
+      <DependentUpon>EditTicket.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditTicket.aspx.designer.cs">
+      <DependentUpon>EditTicket.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

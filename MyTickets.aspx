@@ -30,8 +30,24 @@
                         </asp:LinkButton>
                         
                         <asp:LinkButton ID="CloseButton" runat="server" CommandName="CloseTicket" CommandArgument='<%# Eval("Id") %>'
-                            CssClass="btn btn-success btn-sm" Visible='<%# !Convert.IsDBNull(Eval("DateClosed")) && Eval("DateClosed") != null && Session["UserRole"] != null && Session["UserRole"].ToString() == "CLIENT" %>'>
-                            <i class="fas fa-check"></i> Закрыть
+                            CssClass='<%# (Eval("DateClosed") != null && Eval("DateClosed").ToString() != "") ? "btn btn-secondary btn-sm" : "btn btn-success btn-sm" %>' 
+                            Enabled='<%# Eval("DateClosed") == null || Eval("DateClosed").ToString() == "" %>'
+                            Visible='<%# Session["UserRole"] != null && Session["UserRole"].ToString() == "CLIENT" %>'>
+                            <i class='<%# (Eval("DateClosed") != null && Eval("DateClosed").ToString() != "") ? "fas fa-check" : "fas fa-check-circle" %>'></i>
+                            <%# (Eval("DateClosed") != null && Eval("DateClosed").ToString() != "") ? "Выполнено" : "Закрыть" %>
+                        </asp:LinkButton>
+                        
+                        <asp:LinkButton ID="EditButton" runat="server" CommandName="EditTicket" CommandArgument='<%# Eval("Id") %>'
+                            CssClass="btn btn-primary btn-sm"
+                            Visible='<%# Session["UserRole"] != null && Session["UserRole"].ToString() == "CLIENT" && (Eval("DateClosed") == null || Eval("DateClosed").ToString() == "") %>'>
+                            <i class="fas fa-edit"></i> Редактировать
+                        </asp:LinkButton>
+                        
+                        <asp:LinkButton ID="DeleteButton" runat="server" CommandName="DeleteTicket" CommandArgument='<%# Eval("Id") %>'
+                            CssClass="btn btn-danger btn-sm"
+                            Visible='<%# Session["UserRole"] != null && Session["UserRole"].ToString() == "CLIENT" %>'
+                            OnClientClick="return confirm('Вы уверены, что хотите удалить эту заявку?');">
+                            <i class="fas fa-trash"></i> Удалить
                         </asp:LinkButton>
                         
                         <asp:LinkButton ID="AssignButton" runat="server" CommandName="AssignTicket" CommandArgument='<%# Eval("Id") %>'
