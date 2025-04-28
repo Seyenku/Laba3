@@ -66,7 +66,15 @@ namespace Laba3
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            // Find the LogoutBtn control if it exists and attach the event handler
+            if (!IsPostBack)
+            {
+                var logoutButton = this.FindControl("LogoutBtn") as LinkButton;
+                if (logoutButton != null)
+                {
+                    logoutButton.Click += Logout_Click;
+                }
+            }
         }
 
         protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
@@ -78,6 +86,12 @@ namespace Laba3
 
             // Sign out from ASP.NET Identity
             Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+        }
+
+        protected void Logout_Click(object sender, EventArgs e)
+        {
+            Unnamed_LoggingOut(sender, new LoginCancelEventArgs());
+            Response.Redirect("~/");
         }
     }
 }

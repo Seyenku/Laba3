@@ -183,8 +183,10 @@
     <Content Include="EditTicket.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Logout.aspx" />
     <Content Include="MyTickets.aspx" />
     <Content Include="NewTicket.aspx" />
+    <Content Include="Profile.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -379,8 +381,16 @@
     <Compile Include="EditTicket.aspx.designer.cs">
       <DependentUpon>EditTicket.aspx</DependentUpon>
     </Compile>
+    <Compile Include="EmailService.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Logout.aspx.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Logout.aspx.designer.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
     </Compile>
     <Compile Include="Models\DatabaseInitializer.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -397,6 +407,13 @@
     </Compile>
     <Compile Include="NewTicket.aspx.designer.cs">
       <DependentUpon>NewTicket.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">

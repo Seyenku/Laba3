@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Laba3
 {
+    /*
     public class EmailService : IIdentityMessageService
     {
         public System.Threading.Tasks.Task SendAsync(IdentityMessage message)
@@ -18,6 +19,7 @@ namespace Laba3
             return System.Threading.Tasks.Task.FromResult(0);
         }
     }
+    */
 
     public class SmsService : IIdentityMessageService
     {
@@ -73,7 +75,7 @@ namespace Laba3
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
-            manager.EmailService = new EmailService();
+            //manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)

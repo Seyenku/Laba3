@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,26 +11,36 @@ namespace Laba3.Models
     {
         protected override void Seed(ApplicationDbContext context)
         {
-            // Add statuses
-            var statuses = new List<Status>
+            // Seed Categories
+            if (!context.Categories.Any())
             {
-                new Status { StatusName = "Новая" },
-                new Status { StatusName = "В работе" },
-                new Status { StatusName = "Ожидает ответа клиента" },
-                new Status { StatusName = "Завершена" }
-            };
-            statuses.ForEach(s => context.Statuses.Add(s));
+                var categories = new List<Category>
+                {
+                    new Category { Id = 1, CategoryName = "Техническая проблема" },
+                    new Category { Id = 2, CategoryName = "Установка ПО" },
+                    new Category { Id = 3, CategoryName = "Настройка оборудования" },
+                    new Category { Id = 4, CategoryName = "Сетевая проблема" },
+                    new Category { Id = 5, CategoryName = "Другое" }
+                };
+                
+                categories.ForEach(c => context.Categories.Add(c));
+                context.SaveChanges();
+            }
 
-            // Add categories
-            var categories = new List<Category>
+            // Seed Statuses
+            if (!context.Statuses.Any())
             {
-                new Category { CategoryName = "Техническая проблема" },
-                new Category { CategoryName = "Установка ПО" },
-                new Category { CategoryName = "Настройка оборудования" },
-                new Category { CategoryName = "Сетевая проблема" },
-                new Category { CategoryName = "Другое" }
-            };
-            categories.ForEach(c => context.Categories.Add(c));
+                var statuses = new List<Status>
+                {
+                    new Status { Id = 1, StatusName = "Новая" },
+                    new Status { Id = 2, StatusName = "В работе" },
+                    new Status { Id = 3, StatusName = "Ожидает ответа клиента" },
+                    new Status { Id = 4, StatusName = "Завершена" }
+                };
+                
+                statuses.ForEach(s => context.Statuses.Add(s));
+                context.SaveChanges();
+            }
 
             // Add sample IT staff member
             var adminPassword = ComputeSha256Hash("admin123");
@@ -42,7 +54,7 @@ namespace Laba3.Models
             };
             context.Personnel.Add(itStaff);
 
-            context.SaveChanges();
+            base.Seed(context);
         }
 
         private string ComputeSha256Hash(string rawData)

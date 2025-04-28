@@ -7,17 +7,7 @@
             <div class="col-md-12 text-center">
                 <h1 id="helpDeskTitle">Система технической поддержки</h1>
                 <p class="lead">Добро пожаловать в Help Desk - сервис для регистрации, учета и исполнения заявок технической поддержки.</p>
-                <% if (Session["UserID"] == null) { %>
-                <% } else if (Session["UserRole"] != null && Session["UserRole"].ToString() == "CLIENT") { %>
-                <div class="mt-4">
-                    <a href="NewTicket.aspx" class="btn btn-primary me-2">Создать заявку</a>
-                    <a href="MyTickets.aspx" class="btn btn-outline-primary">Мои заявки</a>
-                </div>
-                <% } else if (Session["UserRole"] != null && Session["UserRole"].ToString() == "IT_STAFF") { %>
-                <div class="mt-4">
-                    <a href="MyTickets.aspx" class="btn btn-primary">Просмотр заявок</a>
-                </div>
-                <% } %>
+                
             </div>
         </section>
         <div class="row mt-5">
