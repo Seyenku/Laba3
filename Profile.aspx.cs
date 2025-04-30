@@ -17,52 +17,24 @@ namespace Laba3
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Проверка авторизации через Session
             if (Session["UserID"] == null)
             {
                 Response.Redirect("~/Account/Login.aspx");
                 return;
             }
 
-            // Получаем данные текущего пользователя
             userId = Convert.ToInt32(Session["UserID"]);
             userRole = Session["UserRole"].ToString();
             userEmail = Session["UserName"].ToString();
 
             if (!IsPostBack)
             {
+                txtCurrentPassword.Text = "";
+                
                 LoadUserData();
                 LoadTicketStatistics();
                 LoadRecentTickets();
             }
-        }
-
-        private void GetUserInfo()
-        {
-            // This method is no longer needed as we get user info from Session variables
-            // Left here for reference
-            /*
-            using (var db = new ApplicationDbContext())
-            {
-                // Проверяем, является ли пользователь клиентом
-                var client = db.Clients.FirstOrDefault(c => c.Email == userEmail);
-                if (client != null)
-                {
-                    userId = client.Id;
-                    userRole = "CLIENT";
-                    return;
-                }
-
-                // Если не клиент, проверяем, является ли IT-специалистом
-                var staff = db.Personnel.FirstOrDefault(p => p.Email == userEmail);
-                if (staff != null)
-                {
-                    userId = staff.Id;
-                    userRole = "IT_STAFF";
-                    return;
-                }
-            }
-            */
         }
 
         private void LoadUserData()
@@ -74,7 +46,6 @@ namespace Laba3
                     var client = db.Clients.FirstOrDefault(c => c.Id == userId);
                     if (client != null)
                     {
-                        // Предполагаем что имя и фамилия хранятся в поле Name
                         string[] nameParts = client.Name.Split(' ');
                         
                         if (nameParts.Length > 0)
@@ -97,7 +68,6 @@ namespace Laba3
                     var staff = db.Personnel.FirstOrDefault(s => s.Id == userId);
                     if (staff != null)
                     {
-                        // Предполагаем что имя и фамилия хранятся в поле Fio
                         string[] nameParts = staff.Fio.Split(' ');
                         
                         if (nameParts.Length > 0)
@@ -122,7 +92,6 @@ namespace Laba3
         {
             using (var db = new ApplicationDbContext())
             {
-                // Получаем статусы открытых заявок (не "Завершена")
                 var closedStatusId = db.Statuses
                     .Where(s => s.StatusName == "Завершена")
                     .Select(s => s.Id)
@@ -136,7 +105,6 @@ namespace Laba3
                 }
                 else
                 {
-                    // Для IT-специалиста показываем назначенные ему заявки и новые заявки
                     query = query.Where(t => t.PersonalId == userId || t.Status.StatusName == "Новая");
                 }
 
@@ -164,7 +132,6 @@ namespace Laba3
                 }
                 else
                 {
-                    // Для IT-специалиста показываем назначенные ему заявки и новые заявки
                     query = query.Where(t => t.PersonalId == userId || t.Status.StatusName == "Новая");
                 }
 
@@ -187,13 +154,11 @@ namespace Laba3
                     var client = db.Clients.FirstOrDefault(c => c.Id == userId);
                     if (client != null)
                     {
-                        // Обновляем данные клиента
                         client.Name = $"{txtFirstName.Text.Trim()} {txtLastName.Text.Trim()}";
                         client.Telephone = txtPhone.Text.Trim();
                         
                         db.SaveChanges();
                         
-                        // Обновляем данные на странице
                         LoadUserData();
                         ClientScript.RegisterStartupScript(this.GetType(), "alert", 
                             "alert('Профиль успешно обновлен');", true);
@@ -204,12 +169,10 @@ namespace Laba3
                     var staff = db.Personnel.FirstOrDefault(s => s.Id == userId);
                     if (staff != null)
                     {
-                        // Обновляем данные сотрудника
                         staff.Fio = $"{txtFirstName.Text.Trim()} {txtLastName.Text.Trim()}";
                         
                         db.SaveChanges();
                         
-                        // Обновляем данные на странице
                         LoadUserData();
                         ClientScript.RegisterStartupScript(this.GetType(), "alert", 
                             "alert('Профиль успешно обновлен');", true);
@@ -224,7 +187,6 @@ namespace Laba3
             string newPassword = txtNewPassword.Text;
             string confirmPassword = txtConfirmPassword.Text;
 
-            // Проверяем, что новый пароль и подтверждение совпадают
             if (newPassword != confirmPassword)
             {
                 ClientScript.RegisterStartupScript(this.GetType(), "alert", 
@@ -243,7 +205,6 @@ namespace Laba3
                     {
                         storedHash = client.PasswordHash;
                         
-                        // Проверяем хеш текущего пароля
                         if (storedHash != ComputeSha256Hash(currentPassword))
                         {
                             ClientScript.RegisterStartupScript(this.GetType(), "alert", 
@@ -251,7 +212,6 @@ namespace Laba3
                             return;
                         }
                         
-                        // Обновляем пароль
                         client.PasswordHash = ComputeSha256Hash(newPassword);
                         db.SaveChanges();
                     }
@@ -263,7 +223,6 @@ namespace Laba3
                     {
                         storedHash = staff.PasswordHash;
                         
-                        // Проверяем хеш текущего пароля
                         if (storedHash != ComputeSha256Hash(currentPassword))
                         {
                             ClientScript.RegisterStartupScript(this.GetType(), "alert", 
@@ -271,13 +230,11 @@ namespace Laba3
                             return;
                         }
                         
-                        // Обновляем пароль
                         staff.PasswordHash = ComputeSha256Hash(newPassword);
                         db.SaveChanges();
                     }
                 }
                 
-                // Очищаем поля пароля
                 txtCurrentPassword.Text = "";
                 txtNewPassword.Text = "";
                 txtConfirmPassword.Text = "";
@@ -287,7 +244,6 @@ namespace Laba3
             }
         }
         
-        // Функция для хеширования пароля с использованием SHA-256
         private string ComputeSha256Hash(string rawData)
         {
             using (SHA256 sha256Hash = SHA256.Create())

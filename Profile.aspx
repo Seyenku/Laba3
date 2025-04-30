@@ -68,7 +68,7 @@
                                 <p class="mb-0">Текущий пароль</p>
                             </div>
                             <div class="col-sm-9">
-                                <asp:TextBox ID="txtCurrentPassword" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtCurrentPassword" runat="server" TextMode="Password" CssClass="form-control" autocomplete="new-password" value=""></asp:TextBox>
                             </div>
                         </div>
                         <div class="row mb-3">

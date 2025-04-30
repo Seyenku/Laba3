@@ -15,18 +15,15 @@ namespace Laba3
 
         protected void Page_Init(object sender, EventArgs e)
         {
-            // Код ниже защищает от XSRF-атак
             var requestCookie = Request.Cookies[AntiXsrfTokenKey];
             Guid requestCookieGuidValue;
             if (requestCookie != null && Guid.TryParse(requestCookie.Value, out requestCookieGuidValue))
             {
-                // Использование маркера Anti-XSRF из файла cookie
                 _antiXsrfTokenValue = requestCookie.Value;
                 Page.ViewStateUserKey = _antiXsrfTokenValue;
             }
             else
             {
-                // Создание нового маркера Anti-XSRF и его сохранение в файле cookie
                 _antiXsrfTokenValue = Guid.NewGuid().ToString("N");
                 Page.ViewStateUserKey = _antiXsrfTokenValue;
 
@@ -49,13 +46,11 @@ namespace Laba3
         {
             if (!IsPostBack)
             {
-                // Задание маркера Anti-XSRF
                 ViewState[AntiXsrfTokenKey] = Page.ViewStateUserKey;
                 ViewState[AntiXsrfUserNameKey] = Context.User.Identity.Name ?? String.Empty;
             }
             else
             {
-                // Проверка маркера Anti-XSRF
                 if ((string)ViewState[AntiXsrfTokenKey] != _antiXsrfTokenValue
                     || (string)ViewState[AntiXsrfUserNameKey] != (Context.User.Identity.Name ?? String.Empty))
                 {
@@ -66,7 +61,6 @@ namespace Laba3
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Find the LogoutBtn control if it exists and attach the event handler
             if (!IsPostBack)
             {
                 var logoutButton = this.FindControl("LogoutBtn") as LinkButton;
@@ -79,12 +73,10 @@ namespace Laba3
 
         protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
         {
-            // Clear our custom session variables
             Session["UserID"] = null;
             Session["UserRole"] = null;
             Session["UserName"] = null;
 
-            // Sign out from ASP.NET Identity
             Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
         }
 

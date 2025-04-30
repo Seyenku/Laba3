@@ -2,7 +2,6 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <style>
-        /* Стили для кастомных чекбоксов */
         .custom-checkbox-wrapper {
             margin-bottom: 15px;
             position: relative;
@@ -57,7 +56,6 @@
             transform: rotate(45deg);
         }
         
-        /* Дополнительные стили формы */
         .login-title {
             margin-bottom: 0.5rem;
         }
@@ -69,57 +67,64 @@
         hr {
             margin: 1.5rem 0;
         }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 15px;
+            }
+        }
     </style>
     
     <main aria-labelledby="title">
-        <h2 id="title" class="login-title"><%: Title %>.</h2>
-        <asp:Panel ID="errorMessage" runat="server" CssClass="text-danger" Visible="false">
-            <asp:Literal ID="ErrorText" runat="server"></asp:Literal>
-        </asp:Panel>
-        <h4 class="login-subtitle">Вход в систему</h4>
-        <hr />
-        
-        <div class="row mb-3">
-            <asp:Label runat="server" AssociatedControlID="Email" CssClass="col-md-2 col-form-label">Email</asp:Label>
-            <div class="col-md-10">
-                <asp:TextBox ID="Email" runat="server" CssClass="form-control" TextMode="Email"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="EmailRequired" runat="server" ControlToValidate="Email" 
-                    CssClass="text-danger" ErrorMessage="Поле адреса электронной почты заполнять обязательно." Display="Dynamic" />
-            </div>
-        </div>
-        
-        <div class="row mb-3">
-            <asp:Label runat="server" AssociatedControlID="Password" CssClass="col-md-2 col-form-label">Пароль</asp:Label>
-            <div class="col-md-10">
-                <asp:TextBox ID="Password" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="PasswordRequired" runat="server" ControlToValidate="Password" 
-                    CssClass="text-danger" ErrorMessage="Поле пароля заполнять обязательно." Display="Dynamic" />
-            </div>
-        </div>
-        
-        <div class="row mb-3">
-            <div class="offset-md-2 col-md-10">
-                <div class="custom-checkbox-wrapper">
-                    <asp:CheckBox ID="RememberMe" runat="server" ClientIDMode="Static" />
-                    <label for="RememberMe" class="custom-checkbox-label">
-                        <span class="custom-checkbox-ui"></span>
-                        Запомнить меня
-                    </label>
+        <div class="container login-container py-4">
+            <h2 id="title" class="login-title"><%: Title %></h2>
+            <asp:Panel ID="errorMessage" runat="server" CssClass="text-danger" Visible="false">
+                <asp:Literal ID="ErrorText" runat="server"></asp:Literal>
+            </asp:Panel>
+            <h4 class="login-subtitle">Вход в систему</h4>
+            <hr />
+            
+            <div class="row mb-3">
+                <asp:Label runat="server" AssociatedControlID="Email" CssClass="col-12 col-md-3 col-form-label">Email</asp:Label>
+                <div class="col-12 col-md-9">
+                    <asp:TextBox ID="Email" runat="server" CssClass="form-control" TextMode="Email"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="EmailRequired" runat="server" ControlToValidate="Email" 
+                        CssClass="text-danger" ErrorMessage="Поле адреса электронной почты заполнять обязательно." Display="Dynamic" />
                 </div>
             </div>
-        </div>
-        
-        <div class="row">
-            <div class="offset-md-2 col-md-10">
-                <asp:Button ID="LoginButton" runat="server" Text="Войти" OnClick="LogIn_Click" CssClass="btn btn-outline-dark" />
+            
+            <div class="row mb-3">
+                <asp:Label runat="server" AssociatedControlID="Password" CssClass="col-12 col-md-3 col-form-label">Пароль</asp:Label>
+                <div class="col-12 col-md-9">
+                    <asp:TextBox ID="Password" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="PasswordRequired" runat="server" ControlToValidate="Password" 
+                        CssClass="text-danger" ErrorMessage="Поле пароля заполнять обязательно." Display="Dynamic" />
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-12 col-md-9 offset-md-3">
+                    <div class="custom-checkbox-wrapper">
+                        <asp:CheckBox ID="RememberMe" runat="server" ClientIDMode="Static" />
+                        <label for="RememberMe" class="custom-checkbox-label">
+                            <span class="custom-checkbox-ui"></span>
+                            Запомнить меня
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12 col-md-9 offset-md-3">
+                    <asp:Button ID="LoginButton" runat="server" Text="Войти" OnClick="LogIn_Click" 
+                        CssClass="btn btn-primary w-100 w-md-auto" />
+                </div>
             </div>
         </div>
     </main>
     
     <script type="text/javascript">
-        // Инициализация кастомного чекбокса при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
-            // Скрываем стандартный чекбокс ASP.NET
             var aspCheckbox = document.getElementById('RememberMe');
             if (aspCheckbox) {
                 aspCheckbox.style.position = 'absolute';
@@ -128,14 +133,11 @@
                 aspCheckbox.style.height = '0';
             }
 
-            // Устанавливаем обработчик клика на метку, чтобы переключать чекбокс
             var checkboxLabel = document.querySelector('.custom-checkbox-label');
             if (checkboxLabel) {
                 checkboxLabel.addEventListener('click', function (e) {
-                    // Предотвращаем стандартное поведение метки
                     e.preventDefault();
 
-                    // Переключаем состояние чекбокса
                     if (aspCheckbox) {
                         aspCheckbox.checked = !aspCheckbox.checked;
                     }

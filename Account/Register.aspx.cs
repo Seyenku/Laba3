@@ -17,21 +17,6 @@ namespace Laba3.Account
             if (!IsPostBack)
             {
                 ClientPanel.Visible = true;
-                StaffPanel.Visible = false;
-            }
-        }
-
-        protected void UserType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (UserType.SelectedValue == "CLIENT")
-            {
-                ClientPanel.Visible = true;
-                StaffPanel.Visible = false;
-            }
-            else
-            {
-                ClientPanel.Visible = false;
-                StaffPanel.Visible = true;
             }
         }
 
@@ -41,62 +26,32 @@ namespace Laba3.Account
             {
                 var db = new ApplicationDbContext();
 
-                if (UserType.SelectedValue == "CLIENT")
+                var client = new Client
                 {
-                    // Register as client
-                    var client = new Client
-                    {
-                        Name = ClientName.Text,
-                        Address = Address.Text,
-                        Telephone = Telephone.Text,
-                        Email = Email.Text,
-                        PasswordHash = ComputeSha256Hash(Password.Text),
-                        Role = "CLIENT"
-                    };
+                    Name = ClientName.Text,
+                    Address = Address.Text,
+                    Telephone = Telephone.Text,
+                    Email = Email.Text,
+                    PasswordHash = ComputeSha256Hash(Password.Text),
+                    Role = "CLIENT"
+                };
 
-                    db.Clients.Add(client);
-                    db.SaveChanges();
+                db.Clients.Add(client);
+                db.SaveChanges();
 
-                    // Also register in ASP.NET Identity for authentication
-                    RegisterIdentityUser();
+                RegisterIdentityUser();
 
-                    Response.Redirect("~/Default.aspx");
-                }
-                else
-                {
-                    // Register as IT staff
-                    var staff = new Personal
-                    {
-                        Fio = StaffName.Text,
-                        Staff = Position.Text,
-                        Email = Email.Text,
-                        PasswordHash = ComputeSha256Hash(Password.Text),
-                        Role = "IT_STAFF"
-                    };
-
-                    db.Personnel.Add(staff);
-                    db.SaveChanges();
-
-                    // Also register in ASP.NET Identity for authentication
-                    RegisterIdentityUser();
-
-                    Response.Redirect("~/Default.aspx");
-                }
+                Response.Redirect("~/Account/Login.aspx");
             }
         }
 
         private void RegisterIdentityUser()
         {
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
             var user = new ApplicationUser() { UserName = Email.Text, Email = Email.Text };
             IdentityResult result = manager.Create(user, Password.Text);
 
-            if (result.Succeeded)
-            {
-                signInManager.SignIn(user, isPersistent: false, rememberBrowser: false);
-            }
-            else
+            if (!result.Succeeded)
             {
                 ErrorMessage.Text = result.Errors.FirstOrDefault();
             }

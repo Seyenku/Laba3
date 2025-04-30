@@ -3,6 +3,7 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.UI.WebControls;
+using System.Configuration;
 
 namespace Laba3
 {
@@ -10,7 +11,6 @@ namespace Laba3
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check if user is authenticated
             if (Session["UserID"] == null || Session["UserRole"] == null)
             {
                 Response.Redirect("~/Account/Login.aspx");
@@ -19,7 +19,6 @@ namespace Laba3
 
             if (!IsPostBack)
             {
-                // Show create ticket button only for clients
                 if (Session["UserRole"].ToString() == "CLIENT")
                 {
                     NewTicketButton.Visible = true;
@@ -48,7 +47,6 @@ namespace Laba3
                 else if (Session["UserRole"].ToString() == "IT_STAFF")
                 {
                     int personalId = Convert.ToInt32(Session["UserID"]);
-                    // For IT staff, show all tickets and those assigned to them
                     query = query.Where(t => t.PersonalId == personalId || t.PersonalId == null);
                 }
 
@@ -112,7 +110,6 @@ namespace Laba3
                 var task = db.Tasks.FirstOrDefault(t => t.Id == taskId && t.ClientId == clientId);
                 if (task != null)
                 {
-                    // Get "Завершена" status
                     var closedStatus = db.Statuses.FirstOrDefault(s => s.StatusName == "Завершена");
                     if (closedStatus != null)
                     {
@@ -120,7 +117,6 @@ namespace Laba3
                         task.DateClosed = DateTime.Now;
                         db.SaveChanges();
 
-                        // Send notification to the assigned IT staff if any
                         if (task.PersonalId.HasValue)
                         {
                             var staff = db.Personnel.Find(task.PersonalId.Value);
@@ -147,7 +143,6 @@ namespace Laba3
                 {
                     task.PersonalId = personalId;
 
-                    // Get "В работе" status
                     var inProgressStatus = db.Statuses.FirstOrDefault(s => s.StatusName == "В работе");
                     if (inProgressStatus != null)
                     {
@@ -156,7 +151,6 @@ namespace Laba3
 
                     db.SaveChanges();
 
-                    // Send notification to the client
                     var client = db.Clients.Find(task.ClientId);
                     if (client != null)
                     {
@@ -205,23 +199,12 @@ namespace Laba3
                                          "С уважением,<br>Служба поддержки", taskId, taskName);
                 }
 
-                // This is a placeholder - in a real application, you would use a proper email service
-                // SmtpClient client = new SmtpClient("smtp.example.com");
-                // client.UseDefaultCredentials = false;
-                // client.Credentials = new NetworkCredential("username", "password");
-
-                // MailMessage message = new MailMessage();
-                // message.From = new MailAddress("support@example.com");
-                // message.To.Add(new MailAddress(email));
-                // message.Subject = subject;
-                // message.Body = body;
-                // message.IsBodyHtml = true;
-
-                // client.Send(message);
+                var emailService = new EmailService();
+                emailService.SendEmail(email, subject, body);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Log the error but don't stop execution
+                System.Diagnostics.Debug.WriteLine("Ошибка отправки почты: " + ex.Message);
             }
         }
     }

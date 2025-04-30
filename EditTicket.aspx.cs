@@ -1,5 +1,6 @@
 using Laba3.Models;
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Web.UI;
 
@@ -11,14 +12,12 @@ namespace Laba3
         
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Проверяем авторизацию и роль пользователя
             if (Session["UserID"] == null || Session["UserRole"] == null || Session["UserRole"].ToString() != "CLIENT")
             {
                 Response.Redirect("~/Account/Login.aspx");
                 return;
             }
 
-            // Получаем ID заявки из параметра запроса
             if (!int.TryParse(Request.QueryString["id"], out ticketId))
             {
                 ShowError("Неверный идентификатор заявки");
@@ -49,7 +48,6 @@ namespace Laba3
 
             using (var db = new ApplicationDbContext())
             {
-                // Проверяем, что заявка существует и принадлежит текущему клиенту
                 var ticket = db.Tasks.FirstOrDefault(t => t.Id == ticketId && t.ClientId == clientId);
                 
                 if (ticket == null)
@@ -59,7 +57,6 @@ namespace Laba3
                     return;
                 }
 
-                // Проверяем, не закрыта ли заявка
                 if (ticket.DateClosed.HasValue)
                 {
                     ShowError("Закрытая заявка не может быть отредактирована");
@@ -67,7 +64,6 @@ namespace Laba3
                     return;
                 }
 
-                // Заполняем форму данными заявки
                 TicketName.Text = ticket.Name;
                 TicketDescription.Text = ticket.Description;
                 TicketCategory.SelectedValue = ticket.CategoryId.ToString();
@@ -91,14 +87,12 @@ namespace Laba3
                     return;
                 }
 
-                // Проверяем, не закрыта ли заявка
                 if (ticket.DateClosed.HasValue)
                 {
                     ShowError("Закрытая заявка не может быть отредактирована");
                     return;
                 }
 
-                // Обновляем данные заявки
                 ticket.Name = TicketName.Text.Trim();
                 ticket.Description = TicketDescription.Text.Trim();
                 ticket.CategoryId = Convert.ToInt32(TicketCategory.SelectedValue);
@@ -107,7 +101,6 @@ namespace Laba3
                 {
                     db.SaveChanges();
                     
-                    // Если заявка назначена специалисту, отправляем уведомление
                     if (ticket.PersonalId.HasValue)
                     {
                         var staff = db.Personnel.Find(ticket.PersonalId.Value);
@@ -153,23 +146,12 @@ namespace Laba3
                 string body = string.Format("Уважаемый специалист,<br><br>Заявка #{0} '{1}' была обновлена клиентом.<br><br>" +
                                          "С уважением,<br>Служба поддержки", taskId, taskName);
 
-                // This is a placeholder - in a real application, you would use a proper email service
-                // SmtpClient client = new SmtpClient("smtp.example.com");
-                // client.UseDefaultCredentials = false;
-                // client.Credentials = new NetworkCredential("username", "password");
-
-                // MailMessage message = new MailMessage();
-                // message.From = new MailAddress("support@example.com");
-                // message.To.Add(new MailAddress(email));
-                // message.Subject = subject;
-                // message.Body = body;
-                // message.IsBodyHtml = true;
-
-                // client.Send(message);
+                var emailService = new EmailService();
+                emailService.SendEmail(email, subject, body);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Log the error but don't stop execution
+                System.Diagnostics.Debug.WriteLine("Ошибка отправки почты: " + ex.Message);
             }
         }
     }

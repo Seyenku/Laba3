@@ -179,7 +179,6 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
-    <Content Include="DirectLogin.aspx" />
     <Content Include="EditTicket.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -366,13 +365,6 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="DirectLogin.aspx.cs">
-      <DependentUpon>DirectLogin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="DirectLogin.aspx.designer.cs">
-      <DependentUpon>DirectLogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="EditTicket.aspx.cs">
       <DependentUpon>EditTicket.aspx</DependentUpon>

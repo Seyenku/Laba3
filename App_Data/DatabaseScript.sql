@@ -1,4 +1,3 @@
--- Create tables
 CREATE TABLE category (
     id INT IDENTITY(1,1) PRIMARY KEY,
     category NVARCHAR(100) NOT NULL
@@ -44,7 +43,6 @@ CREATE TABLE task (
     FOREIGN KEY (status_id) REFERENCES status (id)
 );
 
--- Insert initial data
 INSERT INTO status (status) VALUES 
 ('Новая'), 
 ('В работе'), 
@@ -58,7 +56,6 @@ INSERT INTO category (category) VALUES
 ('Сетевая проблема'),
 ('Другое');
 
--- Insert sample IT staff member with SHA-256 hashed password 'admin123'
 INSERT INTO personals (fio, staff, email, password_hash, role)
 VALUES ('Иванов Иван Иванович', 'Системный администратор', 'admin@example.com', 
         CONVERT(NVARCHAR(255), HASHBYTES('SHA2_256', 'admin123'), 2), 'IT_STAFF');

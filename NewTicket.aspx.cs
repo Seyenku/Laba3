@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Configuration;
 
 namespace Laba3
 {
@@ -10,7 +11,6 @@ namespace Laba3
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check if user is authenticated
             if (Session["UserID"] == null || Session["UserRole"] == null || Session["UserRole"].ToString() != "CLIENT")
             {
                 Response.Redirect("~/Account/Login.aspx");
@@ -45,7 +45,6 @@ namespace Laba3
 
                     using (var db = new ApplicationDbContext())
                     {
-                        // Get the "New" status
                         var newStatus = db.Statuses.FirstOrDefault(s => s.StatusName == "Новая");
                         if (newStatus == null)
                         {
@@ -54,7 +53,6 @@ namespace Laba3
                             return;
                         }
 
-                        // Create the task
                         var task = new Task
                         {
                             Name = TicketName.Text,
@@ -68,11 +66,9 @@ namespace Laba3
                         db.Tasks.Add(task);
                         db.SaveChanges();
 
-                        // Send email notification
                         var client = db.Clients.Find(clientId);
                         SendEmailNotification(client.Email, task.Id, task.Name);
 
-                        // Redirect to a success page or list of tickets
                         Response.Redirect("~/MyTickets.aspx");
                     }
                 }
@@ -88,28 +84,12 @@ namespace Laba3
         {
             try
             {
-                var subject = "Новая заявка создана: #" + taskId;
-                var body = string.Format("Уважаемый клиент,<br><br>Ваша заявка #{0} '{1}' успешно создана и зарегистрирована в системе. " +
-                                         "Наши специалисты приступят к ее обработке в ближайшее время.<br><br>" +
-                                         "С уважением,<br>Служба поддержки", taskId, taskName);
-
-                // This is a placeholder - in a real application, you would use a proper email service
-                // SmtpClient client = new SmtpClient("smtp.example.com");
-                // client.UseDefaultCredentials = false;
-                // client.Credentials = new NetworkCredential("username", "password");
-
-                // MailMessage message = new MailMessage();
-                // message.From = new MailAddress("support@example.com");
-                // message.To.Add(new MailAddress(clientEmail));
-                // message.Subject = subject;
-                // message.Body = body;
-                // message.IsBodyHtml = true;
-
-                // client.Send(message);
+                var emailService = new EmailService();
+                emailService.SendNewTicketNotification(clientEmail, taskId.ToString(), taskName);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Log the error but don't stop execution
+                System.Diagnostics.Debug.WriteLine("Ошибка отправки почты: " + ex.Message);
             }
         }
     }

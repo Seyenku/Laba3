@@ -21,7 +21,7 @@ namespace Laba3
             _smtpServer = ConfigurationManager.AppSettings["SmtpServer"] ?? "smtp.yandex.ru";
             _smtpPort = Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"] ?? "587");
             _smtpUsername = ConfigurationManager.AppSettings["SmtpUsername"] ?? "Seyenku@yandex.ru";
-            _smtpPassword = ConfigurationManager.AppSettings["SmtpPassword"] ?? "objbtjmmkejqonsa";
+            _smtpPassword = ConfigurationManager.AppSettings["SmtpPassword"] ?? "qhxqicvgmztbmzxc";
             _senderEmail = ConfigurationManager.AppSettings["SenderEmail"] ?? _smtpUsername;
             _senderName = ConfigurationManager.AppSettings["SenderName"] ?? "Служба поддержки";
             _enableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["SmtpEnableSsl"] ?? "true");
@@ -95,25 +95,6 @@ namespace Laba3
             return SendEmail(recipientEmail, subject, body);
         }
 
-        public bool SendNewCommentNotification(string recipientEmail, string ticketNumber, string ticketTitle, string commentAuthor)
-        {
-            string subject = $"Новый комментарий к заявке #{ticketNumber}";
-            
-            string body = $@"
-            <html>
-            <body style='font-family: Arial, sans-serif;'>
-                <h2>Новый комментарий к заявке</h2>
-                <p>К заявке <strong>#{ticketNumber}</strong> - '{ticketTitle}' был добавлен новый комментарий от <strong>{commentAuthor}</strong>.</p>
-                <p>Для просмотра комментария перейдите в личный кабинет.</p>
-                <hr>
-                <p style='font-size: 12px; color: #666;'>Это автоматическое сообщение, пожалуйста, не отвечайте на него.</p>
-            </body>
-            </html>";
-
-            return SendEmail(recipientEmail, subject, body);
-        }
-
-        // Отправка уведомления о назначении специалиста
         public bool SendAssignmentNotification(string recipientEmail, string ticketNumber, string ticketTitle, string staffName)
         {
             string subject = $"Специалист назначен на заявку #{ticketNumber}";
@@ -130,34 +111,6 @@ namespace Laba3
             </html>";
 
             return SendEmail(recipientEmail, subject, body);
-        }
-
-        public bool TestConnection()
-        {
-            try
-            {
-                using (var client = new SmtpClient(_smtpServer, _smtpPort))
-                {
-                    client.Credentials = new NetworkCredential(_smtpUsername, _smtpPassword);
-                    client.EnableSsl = _enableSsl;
-                    client.Timeout = 10000;
-                    client.SendMailAsync(new MailMessage(
-                        new MailAddress(_senderEmail, _senderName),
-                        new MailAddress(_senderEmail)
-                    )
-                    {
-                        Subject = "Тест подключения",
-                        Body = "Это тестовое сообщение для проверки настроек SMTP.",
-                        IsBodyHtml = true
-                    }).Wait();
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Ошибка подключения к SMTP: {ex.Message}");
-                return false;
-            }
         }
     }
 } 

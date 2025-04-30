@@ -16,7 +16,6 @@ namespace Laba3
         {
             if (!IsPostBack)
             {
-                // Clear error message
                 errorMessage.Visible = false;
             }
         }
@@ -30,13 +29,10 @@ namespace Laba3
 
                 if (ValidateUser(email, password))
                 {
-                    // Set authentication cookie
                     FormsAuthentication.SetAuthCookie(email, RememberMe.Checked);
 
-                    // Store user information in session
                     StoreUserInfoInSession(email);
 
-                    // Redirect to the requested URL or default page
                     string returnUrl = Request.QueryString["ReturnUrl"];
                     if (!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("/"))
                     {
@@ -49,7 +45,6 @@ namespace Laba3
                 }
                 else
                 {
-                    // Display error message
                     ErrorText.Text = "Неверный email или пароль.";
                     errorMessage.Visible = true;
                 }
